@@ -33,7 +33,7 @@ var podName = process.env.KUBERNETES_POD_NAME || os.hostname();
 var nodeName = process.env.KUBERNETES_NODE_NAME || '-';
 var nodeOS = os.type() + ' ' + os.release();
 var applicationVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
-var containerImage = process.env.CONTAINER_IMAGE || 'paulbouwer/hello-kubernetes:' + applicationVersion
+var containerImage = process.env.CONTAINER_IMAGE || 'Caas-poc/hello-kubernetes:' + applicationVersion
 var containerImageArch = JSON.parse(fs.readFileSync('info.json', 'utf8')).containerImageArch;
 
 logger.debug();
@@ -69,6 +69,19 @@ app.get(handlerPathPrefix + '/', function (req, res) {
       container: containerImage + ' (' + containerImageArch + ')',
       renderPathPrefix: renderPathPrefix
     });
+});
+
+// Function to simulate CPU-intensive task
+function simulateCPULoad(duration) {
+    const start = Date.now();
+    while (Date.now() - start < duration) {}
+}
+
+// Endpoint to generate CPU load
+app.get('/generate-cpu-load', (req, res) => {
+    const duration = req.query.duration || 10000; // Default duration: 10 seconds
+    simulateCPULoad(duration);
+    res.send('CPU load generated successfully.');
 });
 
 // Server
